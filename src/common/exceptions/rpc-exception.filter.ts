@@ -9,6 +9,15 @@ export class ExceptionFilter implements ExceptionFilter {
 
     const error = exception.getError();
 
+    if (error.toString().includes('Empty response')) {
+      return response.status(500).json({
+        status: 500,
+        message: error
+          .toString()
+          .substring(0, error.toString().indexOf('Empty response') - 1),
+      });
+    }
+
     if (typeof error === 'object' && 'status' in error && 'message' in error) {
       const status = isNaN(+error.status) ? 400 : error.status;
       return response.status(status).json(error);
